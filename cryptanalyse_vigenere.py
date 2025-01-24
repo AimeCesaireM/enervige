@@ -1,9 +1,3 @@
-# Sorbonne Université 3I024 2023-2024
-# TME 2 : Cryptanalyse du chiffre de Vigenere
-#
-# Etudiant.e 1 : Aime Cesaire Mugishawayo, 21340522
-# Etudiant.e 2 : Alex Maloigne, 21105949
-# Etudiant.e 3 : Saarah Khodadin, 21117351
 import queue
 import sys, getopt, string, math
 
@@ -82,12 +76,13 @@ def dechiffre_vigenere(txt, key):
     Déchiffre un texte avec le chiffrement Vigenere
     Args:
         txt (str): Le texte à déchiffrer
-        key (str): La clé de chiffrement
+        key (list): La clé de chiffrement
     Returns:
         str: Le texte déchiffré
     """
 
     def decryptChar(char, decalage):
+        # print(char, decalage)
         return alphabet[(alphabet.index(char) - decalage) % len(alphabet)]
 
     decrypted = ""
@@ -398,6 +393,8 @@ def correlation(L1, L2):
     exp2 = expectedValue(L2)
     numerator = sum([(L1[i] - exp1) * (L2[i] - exp2) for i in range(len(L1))])
     denominator = modifiedStdDev(L1) * modifiedStdDev(L2)
+    if denominator == 0:
+        raise ValueError('Length too small to calculate a standard deviation')
     return round(numerator / denominator, 10)
 
 
