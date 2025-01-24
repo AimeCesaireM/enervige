@@ -1,4 +1,4 @@
-# Cryptanalyse Vigenère
+# Enervige - a statistical tool to break the Vigenère cypher
 
 Cryptanalyse Vigenère is a Python-based project for encryption, decryption, and cryptanalysis of text using the Caesar and Vigenère ciphers. The project includes advanced statistical techniques to break the Vigenère cipher using methods like frequency analysis, mutual index of coincidence (ICM), and more.
 
