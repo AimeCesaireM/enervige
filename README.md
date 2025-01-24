@@ -5,6 +5,7 @@ Cryptanalyse Vigenère is a Python-based project for encryption, decryption, and
 This repository provides two ways to interact with the project:
 1. **Console Option**: A command-line interface for advanced users and automation.
 2. **GUI Option**: A graphical user interface for ease of use.
+3. **Standalone Executable GUI**: A standalone executable application for Windows.
 
 ---
 
