@@ -75,7 +75,7 @@ pip install -r requirements.txt
 
 2. Run the GUI:
    ```bash
-   python cryptanalyse_vigenere_gui.py
+   python enervige.py
    ```
 
 3. Use the GUI to:
