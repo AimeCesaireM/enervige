@@ -1,4 +1,3 @@
-import queue
 import sys, getopt, string, math
 
 # Alphabet français/anglais
