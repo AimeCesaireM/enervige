@@ -126,9 +126,9 @@ Decrypted Text: HELLO
 3. These are tests for the ```cryptanalyse_vigenere.py``` which is the core functionality module around which the GUI ```enervige.py``` is wrapped around.
 4. Feel free to add more unit tests when you contribute.
 
-### Limitations of Cryptanalysis
+### Limitations of enervige
 - Short cipher texts may produce unreliable results due to insufficient statistical data.
-- Assumes a standard frequency distribution for the French language, which may not apply to non-standard texts.
+- Assumes a standard frequency distribution for the French and English languages, which may not apply to non-standard texts.
 
 ---
 
