@@ -1,7 +1,7 @@
 import queue
 import sys, getopt, string, math
 
-# Alphabet français
+# Alphabet français/anglais
 alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 # Fréquence moyenne des lettres en français
@@ -15,6 +15,35 @@ freq_FR = [0.09213414037491088, 0.010354463742221126, 0.030178915678726964,
            0.07816806814528274, 0.07374314880919855, 0.06356151362232132,
            0.01645048271269667, 1.14371838095226e-05, 0.004071637436190045,
            0.0023001447439151006, 0.0012263202640210343]
+
+freq_EN = [
+    0.084966,  # A
+    0.020720,  # B
+    0.045388,  # C
+    0.033844,  # D
+    0.111607,  # E
+    0.018121,  # F
+    0.024705,  # G
+    0.030034,  # H
+    0.075448,  # I
+    0.001965,  # J
+    0.011016,  # K
+    0.054893,  # L
+    0.030129,  # M
+    0.066544,  # N
+    0.071635,  # O
+    0.031671,  # P
+    0.001962,  # Q
+    0.075809,  # R
+    0.057351,  # S
+    0.069509,  # T
+    0.036308,  # U
+    0.010074,  # V
+    0.012899,  # W
+    0.002902,  # X
+    0.017779,  # Y
+    0.002722   # Z
+]
 
 
 # Chiffrement César
@@ -400,7 +429,7 @@ def correlation(L1, L2):
 
 # Renvoie la meilleur clé possible par correlation
 # étant donné une longueur de clé fixée
-def clef_correlations(cipher, key_length):
+def clef_correlations(cipher, key_length, freqs=None):
     """
     Renvoie un tuple de la meilleur clé possible par correlation etant
     donné une longueur de clé et le score de cette clé.
@@ -411,9 +440,12 @@ def clef_correlations(cipher, key_length):
     Args:
         cipher (str): Le texte à dechiffrer
         key_length (int): La longueur de la cle
+        freqs (list) : Table de frequence
     Returns:
         (float, list): Un tuple du score et la cle
     """
+    if freqs is None:
+        freqs = freq_FR
     key = [0] * key_length
     score = 0.0
 
@@ -424,7 +456,7 @@ def clef_correlations(cipher, key_length):
         max_corr = 0
         for decal in range(len(alphabet)):
             col_dechiffre = dechiffre_cesar(col, decal)
-            corr = correlation(freq_FR, freq(col_dechiffre))
+            corr = correlation(freqs, freq(col_dechiffre))
             if corr > max_corr:
                 key[index] = decal
                 max_corr = corr
@@ -432,7 +464,12 @@ def clef_correlations(cipher, key_length):
         score += max_corr
     score /= key_length
 
-    return (score, key)
+    return score, key
+
+def clef_correlations_anglais(cipher, key_length):
+    return clef_correlations(cipher, key_length, freq_EN)
+
+
 
 
 # Cryptanalyse V3 avec correlations
@@ -461,7 +498,7 @@ def cryptanalyse_v3(cipher):
     Returns:
         str: Le texte déchiffré
     """
-    MAX_KEY_LENGTH = 20
+    MAX_KEY_LENGTH = 26
     results = []
 
     for key_length in range(1, MAX_KEY_LENGTH + 1):
@@ -476,6 +513,24 @@ def cryptanalyse_v3(cipher):
 
     decrypted = dechiffre_vigenere(cipher, key)
     return decrypted
+
+def cryptanalyse_v3_anglais(cipher):
+    MAX_KEY_LENGTH = 26
+    results = []
+
+    for key_length in range(1, MAX_KEY_LENGTH + 1):
+        results.append(clef_correlations_anglais(cipher, key_length))
+
+    max_score = 0.0
+    key = None
+    for entry in results:
+        if entry[0] > max_score:
+            max_score = entry[0]
+            key = entry[1]
+
+    decrypted = dechiffre_vigenere(cipher, key)
+    return decrypted
+
 
 
 ################################################################

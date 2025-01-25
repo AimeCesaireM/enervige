@@ -1,8 +1,9 @@
-import sys
 import tkinter as tk
 import traceback
 from tkinter import messagebox
 from tkinter import filedialog
+
+
 
 import cryptanalyse_vigenere
 
@@ -11,15 +12,16 @@ import cryptanalyse_vigenere
 class CryptanalysisApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Enervige- A Cryptanalysis Tool")
-        self.root.geometry("800x800")
 
-        # Ciphertext Input Section
-        self.text_label = tk.Label(root, text="Enter Plain/Ciphertext:")
-        self.text_label.pack(pady=5)
+
+        self.root.title("Enervige- A Cryptanalysis Tool.")
+        self.root.geometry("1000x1000")
+
+        self.text_label = tk.Label(root, text="Enter Plain/Ciphertext. Only Letters and Spaces are accepted.\n:")
+        self.text_label.grid(row=0, column=0, columnspan=2, pady=5)
 
         self.input_text = tk.Text(root, height=5, width=40)
-        self.input_text.pack(pady=5)
+        self.input_text.grid(row=1, column=0, columnspan=2, pady=5)
 
         def select_file():
             file_path = filedialog.askopenfilename(title="Or Select a File")
@@ -32,54 +34,74 @@ class CryptanalysisApp:
 
         # Create a button to select a file
         select_button = tk.Button(root, text="Or Select a File", command=select_file)
-        select_button.pack(pady=20)
+        select_button.grid(row=2, column=0, pady=20)
 
         # Label to display the selected file's path
         file_label = tk.Label(root, text="No file selected")
-        file_label.pack(pady=10)
+        file_label.grid(row=2, column=1, pady=10)
 
         # Key Input Section
         self.key_label = tk.Label(root, text="Enter Encryption/Decryption Key (for César or Vigenère)\n"
                                              "Leave blank if you want to do cryptanalysis:")
-        self.key_label.pack(pady=5)
+        self.key_label.grid(row=3, column=0, columnspan=2, pady=5)
 
         self.key_entry = tk.Entry(root)
-        self.key_entry.pack(pady=5)
+        self.key_entry.grid(row=4, column=0, columnspan=2, pady=5)
 
         # Encryption Method Section
         self.method_label = tk.Label(root, text="Choose Process:")
-        self.method_label.pack(pady=5)
+        self.method_label.grid(row=5, column=0, columnspan=2, pady=5)
 
         self.method_var = tk.StringVar(value="cesar")  # Default to César
         self.cesar_radio = tk.Radiobutton(root, text="César", variable=self.method_var, value="cesar")
-        self.cesar_radio.pack()
+        self.cesar_radio.grid(row=6, column=0)
 
         self.vigenere_radio = tk.Radiobutton(root, text="Vigenère", variable=self.method_var, value="vigenere")
-        self.vigenere_radio.pack()
+        self.vigenere_radio.grid(row=6, column=1)
 
-        self.cryptanalyse_radio = tk.Radiobutton(root, text="Cryptanalysis", variable=self.method_var, value="cryptanalyse")
-        self.cryptanalyse_radio.pack()
+        self.cryptanalyse_radio = tk.Radiobutton(root, text="Cryptanalysis", variable=self.method_var,
+                                                 value="cryptanalyse")
+        self.cryptanalyse_radio.grid(row=7, column=0, columnspan=2)
+
+        # Ciphertext Input Section
+        self.language_label = tk.Label(root, text="Choose Language (for Cryptanalysis):")
+        self.language_label.grid(row=8, column=0, columnspan=2, pady=5)
+
+        self.language_var = tk.StringVar(value="English")  # Default to English
+        self.english_radio = tk.Radiobutton(root, text="English", variable=self.language_var, value="English")
+        self.english_radio.grid(row=9, column=0)
+
+        self.french_radio = tk.Radiobutton(root, text="French", variable=self.language_var, value="French")
+        self.french_radio.grid(row=9, column=1)
 
         # Decryption Button
-        self.process_button = tk.Button(root, text="Decrypt", command=self.decrypt_text)
-        self.process_button.pack(pady=20)
+        self.decrypt_button = tk.Button(root, text="Decrypt", command= lambda: self.decrypt_text(root))
+        self.decrypt_button.grid(row=10, column=0, pady=20)
 
         # Encryption Button
-        self.process_button = tk.Button(root, text="Encrypt", command=self.encrypt_text)
-        self.process_button.pack(pady=20)
+        self.encrypt_button = tk.Button(root, text="Encrypt", command=self.encrypt_text)
+        self.encrypt_button.grid(row=10, column=1, pady=20)
 
         # Decrypted Text Output Section
         self.result_label = tk.Label(root, text="Processed Text:")
-        self.result_label.pack(pady=5)
+        self.result_label.grid(row=11, column=0, columnspan=2, pady=5)
 
         self.result_text = tk.Text(root, height=5, width=40)
-        self.result_text.pack(pady=5)
+        self.result_text.grid(row=12, column=0, columnspan=2, pady=5)
 
-    def decrypt_text(self):
+        self.waiting_label = tk.Label(root, text="")
+        self.waiting_label.grid(row=10, column=3, columnspan=2, pady=5)
+
+
+
+    def decrypt_text(self, root):
         # Get user input
         ciphertext = self.input_text.get("1.0", "end-1c").strip().upper()
+        ciphertext = ciphertext.replace(" ", "")
+        decrypted_text = ""
         key = self.key_entry.get().strip()
         method = self.method_var.get()
+        language = self.language_var.get()
 
         # Debug: Print input values
         print(f"decrypt_text - Ciphertext: {ciphertext}, Key: {key}, Method: {method}")
@@ -101,14 +123,12 @@ class CryptanalysisApp:
                 decrypted_text = cryptanalyse_vigenere.dechiffre_vigenere(ciphertext, positions)
 
             elif method == "cryptanalyse":
-                decrypted_text = '\n Attempt 1 \n'
-                decrypted_text += cryptanalyse_vigenere.cryptanalyse_v1(ciphertext)
 
-                decrypted_text += '\n Attempt 2 \n'
-                decrypted_text += cryptanalyse_vigenere.cryptanalyse_v2(ciphertext)
+                if language == "French":
+                    decrypted_text += cryptanalyse_vigenere.cryptanalyse_v3(ciphertext)
+                elif language == "English":
+                    decrypted_text += cryptanalyse_vigenere.cryptanalyse_v3_anglais(ciphertext)
 
-                decrypted_text += '\n Attempt 3 \n'
-                decrypted_text += cryptanalyse_vigenere.cryptanalyse_v3(ciphertext)
 
             else:
                 raise ValueError("We could not figure this one out!")
@@ -122,6 +142,7 @@ class CryptanalysisApp:
             print("An error occurred during decryption:")
             print(traceback.format_exc())  # Detailed traceback to console
 
+
     def KeyToArray(self, key):
         key = key.upper()
         positions = []
@@ -134,6 +155,7 @@ class CryptanalysisApp:
     def encrypt_text(self):
         # Get user input
         cleartext = self.input_text.get("1.0", "end-1c").strip().upper()
+        cleartext = cleartext.replace(" ", "")
         key = self.key_entry.get().strip()
         method = self.method_var.get()
 
